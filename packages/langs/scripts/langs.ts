@@ -85,6 +85,21 @@ export async function loadLangs() {
       continue
     }
 
+    // Patch mermaid grammar to support standalone highlighting without code fences
+    if (content.name === 'mermaid') {
+      // Add the standalone #mermaid pattern to the patterns array
+      // This allows mermaid code to be highlighted without requiring ``` code fences
+      if (content.patterns && Array.isArray(content.patterns)) {
+        // Check if #mermaid pattern is not already included
+        const hasMermaidPattern = content.patterns.some(
+          (p: any) => p.include === '#mermaid'
+        )
+        if (!hasMermaidPattern) {
+          content.patterns.push({ include: '#mermaid' })
+        }
+      }
+    }
+
     const json: LanguageRegistration = {
       ...content,
       name: content.name || lang.name,
